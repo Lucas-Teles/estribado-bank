@@ -8,18 +8,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DataInitializer implements CommandLineRunner {
-    public static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+public class DataBaseInitializer implements CommandLineRunner {
+    public static final Logger log = LoggerFactory.getLogger(DataBaseInitializer.class);
     private final ClienteRepository clienteRepository;
     private final TransacaoRepository transacaoRepository;
 
-    public DataInitializer(ClienteRepository clienteRepository, TransacaoRepository transacaoRepository){
+    public DataBaseInitializer(ClienteRepository clienteRepository, TransacaoRepository transacaoRepository){
         this.clienteRepository = clienteRepository;
         this.transacaoRepository = transacaoRepository;
     }
 
     @Override
-    public void run(String... args) throws Exception{
+    public void run(String... args) throws Exception {
         log.info("Alô Profª. Analu !! ");
         log.info("O banco ta conectado :D");
     }
