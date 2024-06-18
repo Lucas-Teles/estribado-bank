@@ -72,7 +72,6 @@ public class Conta {
 
     public void setRendaMensal(BigDecimal rendaMensal) {
         this.rendaMensal = rendaMensal;
-        this.limite = getLimite();
     }
 
     public BigDecimal getSaldo() {
@@ -81,16 +80,10 @@ public class Conta {
 
     public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
-        this.limite = getLimite();
     }
 
     public BigDecimal getLimite() {
-        if (saldo == null || rendaMensal == null){
-            return BigDecimal.ZERO;
-        }
-        BigDecimal percentual = new BigDecimal("0.15");
-        BigDecimal limiteCalculado = saldo.add(rendaMensal.multiply(percentual));
-        return limiteCalculado;
+        return limite;
     }
 
     public void setLimite(BigDecimal limite) {
