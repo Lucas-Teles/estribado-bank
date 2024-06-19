@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class ClienteService {
     private final ContaRepository contaRepository;
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     public ClienteService(ContaRepository contaRepository, ClienteRepository clienteRepository) {
         this.contaRepository = contaRepository;
@@ -43,17 +43,16 @@ public class ClienteService {
         contaRepository.delete(conta);
     }
 
-    public void removerCliente(Cliente cliente){
-        if (clienteRepository.findById(cliente.getId()).isPresent()){
-            if (cliente.isLogado()){
-                removerConta(cliente);
-                clienteRepository.deleteById(cliente.getId());
-            } else {
-                throw new ClienteException.ClienteNaoEstaLogado();
-            }
-        } else {
-            throw new ClienteException.ClienteNaoCadastradoException();
+    public void removerCliente(UUID clienteId){
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(ClienteException.ClienteNaoCadastradoException::new);
+
+        if (!cliente.isLogado()) {
+            throw new ClienteException.ClienteNaoEstaLogado();
         }
+
+        removerConta(cliente);
+        clienteRepository.delete(cliente);
     }
 
     public void atualizarCliente(UUID id, Cliente cliente){
@@ -105,8 +104,9 @@ public class ClienteService {
         contaRepository.save(contaNova);
     }
 
-    public void logarCliente(Cliente cliente){
-        if (clienteRepository.findById(cliente.getId()).isPresent()){
+    @Transactional
+    public void logarCliente(Cliente cliente) {
+        if (clienteRepository.findById(cliente.getId()).isPresent()) {
             cliente.setLogado(true);
         } else {
             throw new ClienteException.ClienteNaoCadastradoException();
