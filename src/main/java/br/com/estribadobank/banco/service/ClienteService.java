@@ -55,21 +55,27 @@ public class ClienteService {
         clienteRepository.delete(cliente);
     }
 
-    public void atualizarCliente(UUID id, Cliente cliente){
-        if (clienteRepository.findById(id).isPresent()){
-            if (cliente.isLogado()){
-                Cliente clienteAtualizado = cliente;
-                clienteAtualizado.setTelefone(cliente.getTelefone());
-                clienteAtualizado.setEndereco(cliente.getEndereco());
-                clienteAtualizado.setRendaMensal(cliente.getRendaMensal());
-                clienteAtualizado.setEmail(cliente.getEmail());
-                clienteAtualizado.setSenha(cliente.getSenha());
+    public void atualizarCliente(UUID id, Cliente cliente) {
+        Optional<Cliente> clienteExistenteOptional = clienteRepository.findById(id);
 
-                if (cliente.getRendaMensal().compareTo(new BigDecimal("2118.00")) >= 0){
-                    ofertarUpgradeDaConta(clienteAtualizado);
+        if (clienteExistenteOptional.isPresent()) {
+            Cliente clienteExistente = clienteExistenteOptional.get();
+
+            if (cliente.isLogado()) {
+                // Copiar os atributos do cliente para o cliente existente
+                clienteExistente.setTelefone(cliente.getTelefone());
+                clienteExistente.setEndereco(cliente.getEndereco());
+                clienteExistente.setRendaMensal(cliente.getRendaMensal());
+                clienteExistente.setEmail(cliente.getEmail());
+                clienteExistente.setSenha(cliente.getSenha());
+
+                // Verificar condição de renda para ofertar upgrade
+                if (cliente.getRendaMensal().compareTo(new BigDecimal("2118.00")) >= 0) {
+                    ofertarUpgradeDaConta(clienteExistente);
                 }
 
-                clienteRepository.save(clienteAtualizado);
+
+                clienteRepository.save(clienteExistente);
             } else {
                 throw new ClienteException.ClienteNaoEstaLogado();
             }
@@ -77,6 +83,7 @@ public class ClienteService {
             throw new ClienteException.ClienteNaoCadastradoException();
         }
     }
+
 
     public void ofertarUpgradeDaConta(Cliente cliente){
         System.out.println("Gostaria de atualizar sua conta para a catergoria Conta Corrente?, se sim acesse /upgrade-de-conta");
@@ -108,6 +115,7 @@ public class ClienteService {
     public void logarCliente(Cliente cliente) {
         if (clienteRepository.findById(cliente.getId()).isPresent()) {
             cliente.setLogado(true);
+            clienteRepository.save(cliente);
         } else {
             throw new ClienteException.ClienteNaoCadastradoException();
         }
@@ -116,6 +124,7 @@ public class ClienteService {
     public void deslogarCliente(Cliente cliente){
         if (clienteRepository.findById(cliente.getId()).isPresent()){
             cliente.setLogado(false);
+            clienteRepository.save(cliente);
         } else {
             throw new ClienteException.ClienteNaoCadastradoException();
         }

@@ -1,5 +1,6 @@
 package br.com.estribadobank.banco.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -33,6 +34,7 @@ public class Cliente {
 
     @NotNull(message = "Data de nascimento não pode ser vazia")
     @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dataNascimento;
 
     @NotBlank(message = "Telefone não pode ser vazio")
@@ -64,9 +66,11 @@ public class Cliente {
 
     @CreationTimestamp
     @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataCriacao;
 
     @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataAtualizacao;
 
     protected Cliente() {}
@@ -80,7 +84,6 @@ public class Cliente {
         this.rendaMensal = rendaMensal;
         this.email = email;
         this.senha = senha;
-        System.out.println("Cliente criado com sucesso!");
     }
 
     public UUID getId() {

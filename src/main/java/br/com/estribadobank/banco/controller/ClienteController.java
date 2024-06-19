@@ -49,13 +49,25 @@ public class ClienteController {
                 throw new ClienteException.LoginIncorretoException();
             }
         } catch (ClienteException.LoginIncorretoException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Object> logoutCliente(@RequestBody Cliente cliente) {
+    public ResponseEntity<Object> logoutCliente(@RequestBody Map<String, String> loginBody) {
         try {
+            String cpf = loginBody.get("cpf");
+            String senha = loginBody.get("senha");
+            if (cpf == null || senha == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF e senha são obrigatórios");
+            }
+            Cliente cliente = clienteRepository.findClienteByCpfAndSenha(cpf, senha);
+            if (cliente == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado");
+            }
+            if (!cliente.isLogado()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cliente já está deslogado");
+            }
             clienteService.deslogarCliente(cliente);
             return ResponseEntity.ok("Cliente deslogado com sucesso");
         } catch (ClienteException.ClienteNaoCadastradoException e) {
@@ -101,4 +113,5 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar a conta");
         }
     }
+
 }
