@@ -55,20 +55,19 @@ public class ClienteService {
         clienteRepository.delete(cliente);
     }
 
-    public void atualizarCliente(UUID id, Cliente cliente){
-        if (clienteRepository.findById(id).isPresent()){
-            if (cliente.isLogado()){
-                Cliente clienteAtualizado = cliente;
+    public void atualizarCliente(UUID id, Cliente cliente) {
+        if (clienteRepository.findById(id).isPresent()) {
+            Cliente clienteAtualizado = clienteRepository.findById(id).get();
+            if (clienteAtualizado.isLogado()) {
                 clienteAtualizado.setTelefone(cliente.getTelefone());
                 clienteAtualizado.setEndereco(cliente.getEndereco());
                 clienteAtualizado.setRendaMensal(cliente.getRendaMensal());
                 clienteAtualizado.setEmail(cliente.getEmail());
                 clienteAtualizado.setSenha(cliente.getSenha());
-
-                if (cliente.getRendaMensal().compareTo(new BigDecimal("2118.00")) >= 0){
+                if (clienteAtualizado.getRendaMensal().compareTo(new BigDecimal("2118.00")) >= 0){
                     ofertarUpgradeDaConta(clienteAtualizado);
+                    clienteRepository.save(clienteAtualizado);
                 }
-
                 clienteRepository.save(clienteAtualizado);
             } else {
                 throw new ClienteException.ClienteNaoEstaLogado();
@@ -78,8 +77,17 @@ public class ClienteService {
         }
     }
 
+    public void mudarSenha(Cliente cliente, String senha) {
+        if (clienteRepository.findById(cliente.getId()).isPresent()) {
+            cliente.setSenha(senha);
+            clienteRepository.save(cliente);
+        } else {
+            throw new ClienteException.ClienteNaoCadastradoException();
+        }
+    }
+
     public void ofertarUpgradeDaConta(Cliente cliente){
-        System.out.println("Gostaria de atualizar sua conta para a catergoria Conta Corrente?, se sim acesse /upgrade-de-conta");
+        System.out.println("Upgrade de conta disponivel, redirecionar cliente para caso o mesmo queira /upgrade-de-conta");
     }
 
     @Transactional

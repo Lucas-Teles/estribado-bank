@@ -6,6 +6,12 @@ public class ContaException extends RuntimeException {
         super(message);
     }
 
+    public static class ContaNaoExisteException extends ContaException{
+        public ContaNaoExisteException(){
+            super("Conta não cadastrada. Peça para o cliente verificar as informações");
+        }
+    }
+
     public static class SemLimiteException extends ContaException{
         public SemLimiteException(){
             super("Limite insuficiente para fazer a transação");
