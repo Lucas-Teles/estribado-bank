@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,32 +88,137 @@ public class ContaService {
         contaRepository.save(conta);
     }
 
-    public void realizarSaque(UUID id, BigDecimal valorSacado){
+    public void realizarSaque(UUID id, BigDecimal valorDoSaque) {
         Conta conta = contaRepository.findById(id)
                 .orElseThrow(() -> new ContaException.ContaNaoExisteException());
 
-        if (!conta.getCliente().isLogado()){
+        if (!conta.getCliente().isLogado()) {
             throw new ClienteException.ClienteNaoEstaLogado();
         }
 
         BigDecimal taxaDeSaque = BigDecimal.ZERO;
-        int mesAtual = LocalDate.now().getMonthValue();
-        int anoAtual = LocalDate.now().getYear();
-        int ultimoDiaDoMes = YearMonth.of(anoAtual, mesAtual).atEndOfMonth().getDayOfMonth();
-        LocalDateTime inicioMes = LocalDate.of(anoAtual, mesAtual, 1).atTime(23,59,59);
-        LocalDateTime fimMes = LocalDate.of(anoAtual, mesAtual, 1).atTime(23,59,59);
-        Integer saquesFeitos = conta.getSaquesFeitos();
+        LocalDateTime inicioMes = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime fimMes = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(23, 59, 59);
 
-        if (saquesFeitos >= 4){
+        List<Transacao> saquesFeitosNoMes = transacaoRepository.findTransacaosByTipoDeTransferenciaContainingIgnoreCaseAndIdContaIsAndDataTransacaoIsBetween(
+                "saque", id, inicioMes, fimMes);
+
+        if (saquesFeitosNoMes.size() >= 4) {
             taxaDeSaque = new BigDecimal("6.50");
         }
 
+        BigDecimal totalSaque = valorDoSaque.add(taxaDeSaque);
+        if (conta.getLimite().compareTo(totalSaque) >= 0) {
+            conta.setSaldo(conta.getSaldo().subtract(totalSaque));
+            conta.atualizarLimite();
 
+            Transacao transacao = new Transacao(conta.getId(), "saque", LocalDateTime.now(), valorDoSaque);
+            transacaoRepository.save(transacao);
 
-
+            contaRepository.save(conta);
+        } else {
+            throw new ContaException.SemLimiteException();
+        }
     }
 
+    public void realizarPagamento(UUID id, BigDecimal valorAPagar) {
+        Conta conta = contaRepository.findById(id)
+                .orElseThrow(() -> new ContaException.ContaNaoExisteException());
+        if (!conta.getCliente().isLogado()) {
+            throw new ClienteException.ClienteNaoEstaLogado();
+        }
+        if (conta.getLimite().compareTo(valorAPagar) >= 0) {
+            conta.setSaldo(conta.getSaldo().subtract(valorAPagar));
+            conta.atualizarLimite();
+            Transacao transacao = new Transacao(conta.getId(), "pagamento", LocalDateTime.now(), valorAPagar);
+            transacaoRepository.save(transacao);
+            contaRepository.save(conta);
+        } else {
+            throw new ContaException.SemLimiteException();
+        }
+    }
 
+    public void realizarTransferencia(UUID idContaOrigem, UUID idContaDestino, BigDecimal valorDaTransferencia) {
+        Conta contaOrigem = contaRepository.findById(idContaOrigem)
+                .orElseThrow(() -> new ContaException.ContaNaoExisteException());
+
+        Conta contaDestino = contaRepository.findById(idContaDestino)
+                .orElseThrow(() -> new ContaException.ContaNaoExisteException());
+
+        if (!contaOrigem.getCliente().isLogado()) {
+            throw new ClienteException.ClienteNaoEstaLogado();
+        }
+
+        if (contaOrigem.getLimite().compareTo(valorDaTransferencia) <= 0) {
+            throw new ContaException.SemLimiteException();
+        }
+
+        boolean isTransferenciaPermitida = contaOrigem.getTipoDeConta().equals("Conta Corrente") ||
+                (contaOrigem.getTipoDeConta().equals("Conta Pagamento") &&
+                        valorDaTransferencia.compareTo(contaOrigem.getTransferenciaMaxima()) <= 0);
+
+        if (!isTransferenciaPermitida) {
+            throw new ContaException.ContaSemPermissaoException();
+        }
+
+        contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valorDaTransferencia));
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valorDaTransferencia));
+
+        contaOrigem.atualizarLimite();
+        contaDestino.atualizarLimite();
+
+        Transacao transacao = new Transacao(contaOrigem.getId(), "transferência bancária",
+                LocalDateTime.now(), valorDaTransferencia, contaDestino.getId());
+        transacaoRepository.save(transacao);
+        contaRepository.save(contaOrigem);
+        contaRepository.save(contaDestino);
+    }
+
+    public void transferenciaViaPix(UUID idContaOrigem, String chavePix, BigDecimal valorDoPix) {
+        Conta contaOrigem = contaRepository.findById(idContaOrigem)
+                .orElseThrow(() -> new ContaException.ContaNaoExisteException());
+
+        Conta contaDestino = contaRepository.findByChavePix(chavePix);
+        if (contaDestino == null) {
+            throw new ContaException.ChavePixInvalidaException();
+        }
+
+        if (!contaOrigem.getCliente().isLogado()) {
+            throw new ClienteException.ClienteNaoEstaLogado();
+        }
+
+        if (contaOrigem.getSaldo().compareTo(valorDoPix) < 0) {
+            throw new ContaException.SemLimiteException();
+        }
+
+        contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valorDoPix));
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valorDoPix));
+
+        contaOrigem.atualizarLimite();
+        contaDestino.atualizarLimite();
+
+        Transacao transacao = new Transacao(contaOrigem.getId(), "Transferência via Pix",
+                LocalDateTime.now(), valorDoPix, contaDestino.getId());
+        transacaoRepository.save(transacao);
+        contaRepository.save(contaOrigem);
+        contaRepository.save(contaDestino);
+    }
+
+    public void cadastrarChavePix(UUID id, String chavePix){
+        Conta conta = contaRepository.findById(id).orElseThrow(() -> new ContaException.ContaNaoExisteException());
+        if (!conta.getCliente().isLogado()) {throw new ClienteException.ClienteNaoEstaLogado();}
+
+        conta.setChavePix(chavePix);
+        contaRepository.save(conta);
+    }
+
+    public void removerChavePix(UUID id){
+        Conta conta = contaRepository.findById(id).orElseThrow(() -> new ContaException.ContaNaoExisteException());
+        if (!conta.getCliente().isLogado()) {throw new ClienteException.ClienteNaoEstaLogado();}
+
+        conta.setChavePix(null);
+        contaRepository.save(conta);
+    }
 
     public BigDecimal calcularLimite(Conta conta){
         BigDecimal percentual = new BigDecimal("0.15");
