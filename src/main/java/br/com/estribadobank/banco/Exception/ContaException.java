@@ -18,9 +18,9 @@ public class ContaException extends RuntimeException {
         }
     }
 
-    public static class SemChavePixCadastradaException extends ContaException{
-        public SemChavePixCadastradaException(){
-            super("O Cliente ainda não tem chave pix");
+    public static class ChavePixInvalidaException extends ContaException{
+        public ChavePixInvalidaException(){
+            super("Chave pix inválida");
         }
     }
 
