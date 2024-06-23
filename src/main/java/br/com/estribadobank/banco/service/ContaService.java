@@ -67,7 +67,7 @@ public class ContaService {
             throw new ClienteException.ClienteNaoEstaLogado();
         }
 
-        return transacaoRepository.findTransacaosByIdContaIsAndDataTransacaoIsBetween(id, dataInicial, dataFinal);
+        return transacaoRepository.findTransacaosByIdClienteAndDataDaTransacaoBetween(id, dataInicial, dataFinal);
     }
 
     public void depositar(UUID id, BigDecimal valorParaDeposito) {
@@ -100,7 +100,7 @@ public class ContaService {
         LocalDateTime inicioMes = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         LocalDateTime fimMes = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(23, 59, 59);
 
-        List<Transacao> saquesFeitosNoMes = transacaoRepository.findTransacaosByTipoDeTransferenciaContainingIgnoreCaseAndIdContaIsAndDataTransacaoIsBetween(
+        List<Transacao> saquesFeitosNoMes = transacaoRepository.findTransacaosByTipoDeTransferenciaContainingIgnoreCaseAndIdClienteAndDataDaTransacaoBetween(
                 "saque", id, inicioMes, fimMes);
 
         if (saquesFeitosNoMes.size() >= 4) {

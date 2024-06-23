@@ -47,7 +47,4 @@ public class TransacaoController {
     public List<Transacao> listaDePix(){
         return transacaoRepository.findTransacaoByTipoDeTransferenciaContainingIgnoreCase("pix");
     }
-
-
-
 }
