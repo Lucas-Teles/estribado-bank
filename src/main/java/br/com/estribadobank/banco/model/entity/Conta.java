@@ -1,5 +1,6 @@
 package br.com.estribadobank.banco.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,20 +21,22 @@ public class Conta {
     @JoinColumn(name = "cliente")
     private Cliente cliente;
 
-    private String tipoDeConta;
-    private BigDecimal rendaMensal;
-    private BigDecimal saldo = BigDecimal.ZERO;
-    private BigDecimal limite;
-    private BigDecimal transferenciaMaxima;
-    private String chavePix;
+    protected String tipoDeConta;
+    protected BigDecimal rendaMensal;
+    protected BigDecimal saldo = BigDecimal.ZERO;
+    protected BigDecimal limite;
+    protected BigDecimal transferenciaMaxima;
+    protected String chavePix;
 
-    private Integer saquesFeitos = 0;
+    protected Integer saquesFeitos = 0;
 
     @CreationTimestamp
     @Column(updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataDeCriacaoDaConta;
 
     @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataDeAtualizacaoDaConta;
 
     protected Conta(){}
@@ -128,5 +131,8 @@ public class Conta {
 
     public void setDataDeAtualizacaoDaConta(LocalDateTime dataDeAtualizacaoDaConta) {
         this.dataDeAtualizacaoDaConta = dataDeAtualizacaoDaConta;
+    }
+
+    public void atualizarLimite(){
     }
 }
