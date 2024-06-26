@@ -29,11 +29,6 @@ public class ContaController {
         this.contaService = contaService;
     }
 
-    @GetMapping("/contas")
-    public List<Conta> listaDeContas(){
-        return contaRepository.findAll();
-    }
-
     @GetMapping("/{idCliente}")
     public ResponseEntity<Object> verConta(@PathVariable UUID idCliente){
         try {

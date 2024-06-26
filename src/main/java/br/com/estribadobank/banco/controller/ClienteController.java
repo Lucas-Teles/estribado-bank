@@ -27,11 +27,6 @@ public class ClienteController {
         this.contaRepository = contaRepository;
     }
 
-    @GetMapping("/clientes")
-    public List<Cliente> listaDeClientes(){
-        return clienteRepository.findAll();
-    }
-
     @PostMapping("/cadastrar")
     public ResponseEntity<Object> cadastrarCliente(@RequestBody Cliente cliente) {
         try {
