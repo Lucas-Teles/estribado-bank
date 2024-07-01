@@ -121,29 +121,289 @@ _Uso do banco_
 
 ### Exemplos para uso
 
-- Cadastrar:
+#### cadastro de cliente
 
-```
+**Endpoint:** `POST /cliente/cadastrar`
+
+**Request Body:**
+
+```json
 {
-  "cpf": "423.456.789-01",
-  "nome": "Fulano de Tal Tal",
-  "dataNascimento": "01-01-1991",
-  "telefone": "(11) 99499-9999",
+  "cpf": "123.456.789-01",
+  "nome": "João da Silva",
+  "dataNascimento": "01-01-1980",
+  "telefone": "123456789",
   "endereco": "Rua Exemplo, 123",
-  "rendaMensal": 3000.00,
-  "email": "fulano@example.com",
-  "senha": "SenhaSenha123"
+  "rendaMensal": 3000.0,
+  "email": "joao@example.com",
+  "senha": "senhaSegura123"
 }
 ```
 
-- logar e deslogar:
+<details>
+<sumary>Responses:</sumary>
+- 201 Created: Cliente cadastrado com sucesso
+- 409 Conflict: Cliente já existe
+- 500 Internal Server Error: Erro ao cadastrar o cliente
+</details>
 
-```
+#### login de cliente
+
+**Endpoint:** `POST /cliente/login`
+
+**Request Body:**
+
+```json
 {
-    "cpf": "423.456.789-01",
-    "senha": "SenhaSenha123"
+  "cpf": "123.456.789-01",
+  "senha": "senhaSegura123"
 }
 ```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Cliente logado com sucesso
+- 400 Bad Request: Login incorreto
+</details>
+
+#### logout de cliente
+
+**Endpoint:** `POST /cliente/logout`
+
+**Request Body:**
+
+```json
+{
+  "cpf": "123.456.789-01",
+  "senha": "senhaSegura123"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Cliente deslogado com sucesso
+- 404 Not Found: Cliente não encontrado
+- 400 Bad Request: Login ou senha incorreta
+</details>
+
+#### Atualização de cliente
+
+**Endpoint:** `PUT /cliente/{idCliente}/atualizar`
+
+**Request Body:**
+
+```json
+{
+  "cpf": "123.456.789-01",
+  "nome": "Novo Nome da Silva",
+  "dataNascimento": "01-01-1980",
+  "telefone": "987654321",
+  "endereco": "Nova Rua, 456",
+  "rendaMensal": 4310.0,
+  "email": "novoemail@estribadobank.com",
+  "senha": "novaSenha123"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Cliente atualizado com sucesso
+- 409 Conflict: Cliente não cadastrado ou não está logado
+- 500 Internal Server Error: Erro ao atualizar o cliente
+</details>
+
+#### Mudança de senha
+
+**Endpoint:** `PATCH /cliente/{idCliente}/mudar-senha`
+
+**Request Body:**
+
+```json
+{
+  "cpf": "123.456.789-01",
+  "email": "joao@example.com",
+  "senha": "novaSenha123"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Senha alterada com sucesso
+- 404 Not Found: Cliente não encontrado
+</details>
+
+#### Remover conta
+
+**Endpoint:** `DELETE /cliente/{idCliente}/encerrar-conta`
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Conta encerrada com sucesso
+- 404 Not Found: Cliente não encontrado
+- 500 Internal Server Error: Erro ao removar o cliente
+</details>
+
+#### Upgrade de conta
+
+**Endpoint:** `Endpoint: POST /cliente/{idCliente}/upgrade-conta`
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Conta atualizada com sucesso
+- 403 Forbidden: Cliente não cadastrado, não está logado ou não atende à renda mínima
+- 500 Internal Server Error: Erro ao removar o cliente
+</details>
+
+#### Ver conta
+
+**Endpoint:** `Endpoint: GET /conta/{idCliente}`
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Conta atualizada com sucesso
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Erro ao removar o cliente
+</details>
+
+#### Ver saldo
+
+**Endpoint:** `Endpoint: GET /conta/{idConta}/saldo`
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Retorna o saldo da conta
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Ver extrato
+
+**Endpoint:** `Endpoint: GET /conta/{idConta}/extrato?mes={mes}&ano={ano}`
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Retorna o extrato da conta para o mês e ano especificados
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Depósito em conta
+
+**Endpoint:** `Endpoint: PATCH /conta/{idConta}/deposito`
+
+**Request Body:**
+
+```json
+{
+  "quantia": "150.00"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Depósito realizado com sucesso
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Saque em conta
+
+**Endpoint:** `Endpoint: PATCH /conta/{idConta}/saque`
+
+**Request Body:**
+
+```json
+{
+  "quantia": "70.00"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Saque realizado com sucesso
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Pagamento de conta
+
+**Endpoint:** `Endpoint: PATCH /conta/{idConta}/pagamento-de-conta`
+
+**Request Body:**
+
+```json
+{
+  "quantia": "30.00"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Pagamento realizado com sucesso
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Transferência entre conta
+
+**Endpoint:** `Endpoint: PATCH /conta/{idContaOrigem}/transferencia`
+
+**Request Body:**
+
+```json
+{
+  "idContaDestino": "UUID da conta aqui",
+  "quantia": "20.00"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Transferência realizada com sucesso
+- 403 Forbidden: Sem limite disponível para transferêcia ou conta não tem permissão
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Transferência via pix
+
+**Endpoint:** `Endpoint: PATCH /conta/{idConta}/pix`
+
+**Request Body:**
+
+```json
+{
+  "chavePix": "chavePixCadastrada",
+  "quantia": "100.00"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 200 OK: Transferência via PIX realizada com sucesso
+- 403 Forbidden: Sem limite disponível para transferêcia ou chave PIX inválida
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
+
+#### Cadastro de chave PIX
+
+**Endpoint:** `Endpoint: PATCH /conta/{idConta}/pix`
+
+**Request Body:**
+
+```json
+{
+  "chavePix": "chavePixQueVaiCadastrar"
+}
+```
+
+<details>
+<sumary>Responses:</sumary>
+- 201 Created: Chave PIX cadastrada com sucesso
+- 409 Conflict: Cliente não está logado
+- 404 Not Found: Conta não encontrada
+</details>
 
 ### Mini Documentação de Anotações
 
