@@ -141,10 +141,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 201 Created: Cliente cadastrado com sucesso
 - 409 Conflict: Cliente já existe
 - 500 Internal Server Error: Erro ao cadastrar o cliente
+
 </details>
 
 #### login de cliente
@@ -161,9 +163,11 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Cliente logado com sucesso
 - 400 Bad Request: Login incorreto
+
 </details>
 
 #### logout de cliente
@@ -180,10 +184,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Cliente deslogado com sucesso
 - 404 Not Found: Cliente não encontrado
 - 400 Bad Request: Login ou senha incorreta
+
 </details>
 
 #### Atualização de cliente
@@ -206,10 +212,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Cliente atualizado com sucesso
 - 409 Conflict: Cliente não cadastrado ou não está logado
 - 500 Internal Server Error: Erro ao atualizar o cliente
+
 </details>
 
 #### Mudança de senha
@@ -227,9 +235,11 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Senha alterada com sucesso
 - 404 Not Found: Cliente não encontrado
+
 </details>
 
 #### Remover conta
@@ -237,10 +247,12 @@ _Uso do banco_
 **Endpoint:** `DELETE /cliente/{idCliente}/encerrar-conta`
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Conta encerrada com sucesso
 - 404 Not Found: Cliente não encontrado
 - 500 Internal Server Error: Erro ao removar o cliente
+
 </details>
 
 #### Upgrade de conta
@@ -248,10 +260,12 @@ _Uso do banco_
 **Endpoint:** `Endpoint: POST /cliente/{idCliente}/upgrade-conta`
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Conta atualizada com sucesso
 - 403 Forbidden: Cliente não cadastrado, não está logado ou não atende à renda mínima
 - 500 Internal Server Error: Erro ao removar o cliente
+
 </details>
 
 #### Ver conta
@@ -259,10 +273,12 @@ _Uso do banco_
 **Endpoint:** `Endpoint: GET /conta/{idCliente}`
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Conta atualizada com sucesso
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Erro ao removar o cliente
+
 </details>
 
 #### Ver saldo
@@ -270,10 +286,12 @@ _Uso do banco_
 **Endpoint:** `Endpoint: GET /conta/{idConta}/saldo`
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Retorna o saldo da conta
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Ver extrato
@@ -281,10 +299,12 @@ _Uso do banco_
 **Endpoint:** `Endpoint: GET /conta/{idConta}/extrato?mes={mes}&ano={ano}`
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Retorna o extrato da conta para o mês e ano especificados
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Depósito em conta
@@ -300,10 +320,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Depósito realizado com sucesso
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Saque em conta
@@ -319,10 +341,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Saque realizado com sucesso
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Pagamento de conta
@@ -338,10 +362,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Pagamento realizado com sucesso
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Transferência entre conta
@@ -358,11 +384,13 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Transferência realizada com sucesso
 - 403 Forbidden: Sem limite disponível para transferêcia ou conta não tem permissão
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Transferência via pix
@@ -379,16 +407,18 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 200 OK: Transferência via PIX realizada com sucesso
 - 403 Forbidden: Sem limite disponível para transferêcia ou chave PIX inválida
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 #### Cadastro de chave PIX
 
-**Endpoint:** `Endpoint: PATCH /conta/{idConta}/pix`
+**Endpoint:** `Endpoint: POST /conta/{idConta}/pix/cadastro`
 
 **Request Body:**
 
@@ -399,10 +429,12 @@ _Uso do banco_
 ```
 
 <details>
-<sumary>Responses:</sumary>
+<summary>Responses:</summary>
+
 - 201 Created: Chave PIX cadastrada com sucesso
 - 409 Conflict: Cliente não está logado
 - 404 Not Found: Conta não encontrada
+
 </details>
 
 ### Mini Documentação de Anotações
