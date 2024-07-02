@@ -2,12 +2,22 @@ package br.com.estribadobank.banco.model.entity;
 
 import jakarta.persistence.Entity;
 
+import java.math.BigDecimal;
+
 @Entity
 public class ContaPagamento extends Conta{
-    public ContaPagamento(){}
-    public ContaPagamento(Cliente cliente){
+    public ContaPagamento() {
+    }
+
+    public ContaPagamento(Cliente cliente) {
         super(cliente);
-        setTipoDeConta("Conta Pagamento");
-        setRendaMensal(cliente.getRendaMensal());
+        tipoDeConta = "Conta Pagamento";
+        limite = saldo;
+        transferenciaMaxima = new BigDecimal("4999.99");
+    }
+
+    @Override
+    public void atualizarLimite() {
+        setLimite(saldo);
     }
 }

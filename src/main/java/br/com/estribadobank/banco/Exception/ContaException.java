@@ -6,15 +6,21 @@ public class ContaException extends RuntimeException {
         super(message);
     }
 
+    public static class ContaNaoExisteException extends ContaException{
+        public ContaNaoExisteException(){
+            super("Conta não cadastrada. Peça para o cliente verificar as informações");
+        }
+    }
+
     public static class SemLimiteException extends ContaException{
         public SemLimiteException(){
             super("Limite insuficiente para fazer a transação");
         }
     }
 
-    public static class SemChavePixCadastradaException extends ContaException{
-        public SemChavePixCadastradaException(){
-            super("O Cliente ainda não tem chave pix");
+    public static class ChavePixInvalidaException extends ContaException{
+        public ChavePixInvalidaException(){
+            super("Chave pix inválida");
         }
     }
 
