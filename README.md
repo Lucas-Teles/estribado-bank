@@ -40,7 +40,7 @@ git clone https://github.com/Lucas-Teles/estribado-bank.git
 
 ### Usando a API online
 
-Para acessar a API pelo servidor basta clicar aqui -> [EstribadoBank]()
+Para acessar a API pelo EC2 da AWS basta clicar aqui -> [EstribadoBank](http://ec2-3-21-98-246.us-east-2.compute.amazonaws.com:8080/swagger-ui/index.html#/)
 
 - Caso não esteja conectando no momento de acesso. Peço que abra uma issue.
 
