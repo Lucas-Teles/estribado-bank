@@ -21,6 +21,6 @@ public class DataBaseInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("Alô Profª. Analu !! ");
-        log.info("O banco ta conectado :D");
+        log.info("O banco ta conectado :D aprendi direitinho !");
     }
 }
