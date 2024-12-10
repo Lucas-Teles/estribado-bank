@@ -35,7 +35,7 @@ public class Cliente {
     @Size(min = 3, max = 255)
     private String nome;
 
-//    @NotBlank(message = "Data de nascimento não pode ser vazia")
+    @NotNull(message = "Data de nascimento não pode ser vazia")
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dataNascimento;
