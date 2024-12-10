@@ -5,8 +5,10 @@ import br.com.estribadobank.banco.model.entity.Cliente;
 import br.com.estribadobank.banco.repository.ClienteRepository;
 import br.com.estribadobank.banco.repository.ContaRepository;
 import br.com.estribadobank.banco.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class ClienteController {
 
     private final ClienteService service;
@@ -26,8 +28,7 @@ public class ClienteController {
 
 
     @PostMapping
-    public ResponseEntity<Void> cadastrarCliente(@RequestBody Cliente cliente){
-
+    public ResponseEntity<Void> cadastrarCliente(@Valid @RequestBody Cliente cliente){
         service.salvar(cliente);
 
         URI location = ServletUriComponentsBuilder

@@ -27,7 +27,7 @@ public class Cliente {
 
     @NotBlank(message = "CPF não pode ser vazio")
     @Column(nullable = false, unique = true)
-    @CPF
+    @CPF(message = "CPF inválido")
     private String cpf;
 
     @NotBlank(message = "Nome não pode ser vazio")
@@ -35,7 +35,7 @@ public class Cliente {
     @Size(min = 3, max = 255)
     private String nome;
 
-    @NotBlank(message = "Data de nascimento não pode ser vazia")
+//    @NotBlank(message = "Data de nascimento não pode ser vazia")
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dataNascimento;
@@ -49,7 +49,7 @@ public class Cliente {
     @Size(min = 5, max = 255)
     private String endereco;
 
-    @NotBlank(message = "E-mail não pode ser vazio")
+    @NotNull(message = "E-mail não pode ser vazio")
     @Column(nullable = false)
     @Email(message = "E-mail inválido")
     private String email;
@@ -59,7 +59,7 @@ public class Cliente {
     @Size(min = 8, max = 100)
     private String senha;
 
-    @NotBlank(message = "Renda mensal não pode ser vazia")
+    @NotNull(message = "Renda mensal não pode ser vazia")
     @Column(nullable = false)
     @Digits(integer = 10, fraction = 2, message = "Renda informada não é válida. Por favor, insira um valor numérico válido")
     private BigDecimal rendaMensal;
